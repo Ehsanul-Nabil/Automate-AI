@@ -55,24 +55,33 @@ function CreateAgent() {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    try {
-      const data = await createAgent({
-        name,
-        knowledgeBase,
-        instructions,
-        tools
-      })
-      console.log(data)
-      setLoading(false)
-      navigate("/agents")
-    } catch (error) {
-      console.log(error)
-      setError(error.response?.data?.message || "unable to create Agent")
-      setLoading(false)
+  e.preventDefault();
+  setLoading(true);
+  try {
+    const result = await createAgent({
+      name,
+      knowledgeBase,
+      instructions,
+      tools
+    });
+
+    console.log(result);
+    if (result?.response?.data?.message) {
+      console.log(result);
+      setError(result?.response?.data?.message);
+      setLoading(false);
+      return;
     }
+
+    setLoading(false);
+    navigate("/agents");
+  } catch (error) {
+    console.log(error);
+    setError(error.response?.data?.message || "unable to create Agent");
+    setLoading(false);
   }
+};
+
 
   return (
     <div className='relative min-h-screen bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,#2b2f3a_0%,#191b21_55%,#121317_100%)] text-white'>

@@ -15,7 +15,7 @@ const whiteBtn =
 function Agents() {
   const [search, setSearch] = useState("")
   const dispatch=useDispatch()
-  const {agents,agentsLoading:loading,setDelete}=useSelector(state=>state.agent)
+  const {agents,agentsLoading:loading,setDelete,setSelectedAgent}=useSelector(state=>state.agent)
 
 
   const filteredAgents = agents.filter((agent) => {
@@ -162,6 +162,7 @@ function Agents() {
                       </span>
                       <Button
                         asChild
+                        onClick={()=>dispatch(setSelectedAgent(agent.name))}
                         variant="ghost"
                         size="sm"
                         className="h-8 gap-1.5 rounded-lg text-zinc-300 hover:bg-white/10 hover:text-white"

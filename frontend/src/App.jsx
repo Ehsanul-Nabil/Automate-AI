@@ -9,6 +9,7 @@ import { me } from './features/auth'
 import { useDispatch, useSelector } from 'react-redux'
 import { setUserData } from './redux/userSlice'
 import { setAgents, setAgentsLoading } from './redux/agentSlice'
+import { getAllAgents } from './features/agent'
 
 function App() {
   const dispatch = useDispatch()
