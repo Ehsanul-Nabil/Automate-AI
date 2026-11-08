@@ -8,6 +8,7 @@ import CreateAgent from './pages/CreateAgent'
 import { me } from './features/auth'
 import { useDispatch, useSelector } from 'react-redux'
 import { setUserData } from './redux/userSlice'
+import { setAgents, setAgentsLoading } from './redux/agentSlice'
 
 function App() {
   const dispatch = useDispatch()
@@ -23,6 +24,24 @@ function App() {
     }
     fetch()
   }, [])
+
+  
+  const fetchAgents = async () => {
+      dispatch(setAgentsLoading(true))
+    try {
+      const data = await getAllAgents()
+      dispatch(setAgents(data))
+      dispatch(setAgentsLoading(false))
+      console.log(data)
+    } catch (error) {
+      dispatch(setAgentsLoading(false))
+      console.log(error)
+    }
+  }
+
+  useEffect(()=>{
+    fetchAgents()
+  },[])
 
   const { userData } = useSelector(state => state.user)
 

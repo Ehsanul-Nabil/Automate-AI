@@ -1,6 +1,6 @@
 import React from 'react'
 import { Workflow } from 'lucide-react'
-import LoginForm from '@/components/login-form'
+import {LoginForm} from '@/components/login-form'
 
 function Login() {
   return (
