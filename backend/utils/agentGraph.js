@@ -6,6 +6,9 @@ import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
 import { SystemMessage } from "@langchain/core/messages";
 import { getMcpTools } from "../mcp/langgraph-mcp.js";
+// add after edit
+import { DynamicStructuredTool } from "@langchain/core/tools";
+import { z } from "zod";
 
 dotenv.config();
 
@@ -20,11 +23,55 @@ const llm = new ChatGroq({
 const client = new MongoClient(process.env.MONGO_URI);
 const checkpointer = new MongoDBSaver({ client, dbName: "langgraph" });
 
+const findTool = (tools, names) => {
+  return tools.find((tool) => names?.includes(tool.name));
+};
+
+const limitMessageContext = (message, maxChars = 4000) => {
+  if (typeof message.content !== "string") {
+    return message;
+  }
+  if (message.content.length <= maxChars) {
+    return message;
+  }
+
+  return {
+    ...message,
+    content: message.content.slice(0, maxChars) + "\n[content truncated]",
+  };
+};
+
 export const createAgentGraph = async (agent, userId) => {
   const mcpTools = await getMcpTools();
-  console.log(mcpTools.map((tool) => tool.name));
+//   console.log(mcpTools.map((tool) => tool.name));
+console.log("mcpTools", mcpTools);
 
-  const llmWithTools = llm.bindTools(mcpTools);
+  const webSearchMCPTool = findTool(mcpTools, ["web_search", "automate_web_search"]);
+
+  const finalTools = [];
+  if (webSearchMCPTool) {
+    finalTools.push(
+      new DynamicStructuredTool({
+        name: "web_search",
+        description: `Search the web for current information, news, tutorials, documentation, and factual questions.`,
+        schema: z.object({
+          query: z.string().describe("The search query"),
+        }),
+        func: async ({ query }) => {
+          try {
+            const result = await webSearchMCPTool.invoke({ query });
+            console.log(result);
+            return result;
+          } catch (error) {
+            console.error("❌ MCP search error:", error);
+            return "web search failed";
+          }
+        },
+      })
+    );
+  }
+
+  const llmWithTools = llm.bindTools(finalTools);
 
   const currentDateTime = new Intl.DateTimeFormat("en-IN", {
     timeZone: "Asia/Kolkata",
@@ -112,21 +159,53 @@ GENERAL RULES:
 - Ask questions only when essential information is missing.
 `;
 
-  const chatNode = async (state) => {
+    const approvalTools = new Set([
+    "send_email",
+    "create_calendar_event",
+    "publish_instagram_image",
+    ]);
+
+    // const chatNode = async (state) => {
+    // const recentMessages = state.messages.slice(-4);
+    // const response = await llmWithTools.invoke([
+    //     new SystemMessage(systemPrompt),
+    //     ...recentMessages,
+    // ]);
+    // return {
+    //     messages: [response],
+    // };
+    // };
+
+    const chatNode = async (state) => {
+    const recentMessages = state.messages
+      .slice(-4)
+      .map((message) => limitMessageContext(message));
+
     const response = await llmWithTools.invoke([
       new SystemMessage(systemPrompt),
-      ...state.messages,
+      ...recentMessages,
     ]);
     return {
       messages: [response],
     };
   };
 
-  const toolNode = new ToolNode(mcpTools);
+  
+  const toolNode = new ToolNode(finalTools);
 
   const actionApprovalNode = () => {};
 
-  const routeAfterChat = () => {};
+  const routeAfterChat = (state) => {
+  const messages = state.messages || [];
+  const lastMessage = messages[messages.length - 1];
+  if (!lastMessage?.tool_calls?.length) {
+    return "__end__";
+  }
+  const requiresApproval = lastMessage?.tool_calls?.some((call) =>
+    approvalTools.has(call.name)
+  );
+  return requiresApproval ? "actionApprovalNode" : "tools";
+  };
 
   const routeAfterApproval = () => {};
 
@@ -138,7 +217,7 @@ GENERAL RULES:
     .addConditionalEdges("chatNode", routeAfterChat)
     .addEdge("tools", "chatNode")
     .addConditionalEdges("actionApprovalNode", routeAfterApproval)
-    .addEdge("chatNode", "__end__");
+    // .addEdge("chatNode", "__end__");
 
   return workflow.compile({ checkpointer });
 };

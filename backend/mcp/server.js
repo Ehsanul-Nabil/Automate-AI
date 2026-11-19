@@ -1,5 +1,7 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+// import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+// import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { McpServer } from "@modelcontextprotocol/server";
+import { StdioServerTransport } from "@modelcontextprotocol/server/stdio";
 import dotenv from "dotenv";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -19,7 +21,7 @@ const server = new McpServer({
 const tavilySearch = new TavilySearch({
   maxResults: 5,
   topic: "general",
-  tavilyApiKey:TAVILY_API_KEY
+  tavilyApiKey:process.env.TAVILY_API_KEY
 });
 
 server.registerTool(
@@ -37,12 +39,12 @@ server.registerTool(
         content: [
           {
             type: "text",
-            text: result,
+            text: JSON.stringify(result),
           },
         ],
       };
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return {
         content: [
           {

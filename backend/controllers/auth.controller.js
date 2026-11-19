@@ -72,7 +72,6 @@ export const logout = async (req, res) => {
 
 export const me=async (req,res)=>{
     try {
-        console.log("hdkfkdjfk")
         const user=req.user
         return res.status(200).json(user)
     } catch (error) {

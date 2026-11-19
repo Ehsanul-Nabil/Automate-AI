@@ -23,7 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { logout } from '@/features/auth'
-import { chat } from '@/features/chat'
+import { agentChat, chat } from '@/features/chat'
 import { setUserData } from '@/redux/userSlice'
 import { setSelectedAgent } from '@/redux/agentSlice'
 

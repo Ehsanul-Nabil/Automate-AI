@@ -39,13 +39,12 @@ export const agentChat = async (req, res) => {
       return res.status(400).json({ message: "message required" });
     }
 
-    const threadId = req.user._id.toString();
     const existingAgent = await Agent.findOne({ name: agent });
-    
     if (!existingAgent) {
       return res.status(400).json({ message: "Agent not found" });
     }
 
+    const threadId = `${req.user._id.toString()}:${existingAgent?._id}`;
     const graph = await createAgentGraph(existingAgent, req.user._id);
     const result = await graph.invoke(
       {
@@ -54,14 +53,19 @@ export const agentChat = async (req, res) => {
         ],
       },
       {
-        configurable: { thread_id: threadId }
+        configurable: { thread_id: threadId },
+        recursionLimit: 5,
       }
     );
 
+    console.log(result);
     const lastMessage = result.messages[result.messages.length - 1].content;
-
     return res.status(200).json({ aiResponse: lastMessage });
   } catch (error) {
+    console.error("agent chat controller error", error);
     return res.status(500).json({ message: `agent chat controller error ${error}` });
   }
 };
+
+
+ 
