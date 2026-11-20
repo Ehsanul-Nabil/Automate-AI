@@ -21,3 +21,27 @@ export const getMcpTools = async () => {
   console.log(tools.map((tool) => tool.name));
   return tools
 };
+
+
+
+
+// [
+//     {
+//         name: "analyze_image",
+//         description: "Analyze an image",
+//         schema: { /* input schema */ },
+//         invoke: async (input) => { /* execute tool */ }
+//     },
+//     {
+//         name: "send_email",
+//         description: "Send an email",
+//         schema: { /* input schema */ },
+//         invoke: async (input) => { /* execute tool */ }
+//     },
+//     {
+//         name: "web_search",
+//         description: "Search the web",
+//         schema: { /* input schema */ },
+//         invoke: async (input) => { /* execute tool */ }
+//     }
+// ]

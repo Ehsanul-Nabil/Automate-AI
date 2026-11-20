@@ -1,3 +1,5 @@
+import api from "@/api"
+
 export const connectGoogle=async ()=>{
     try {
         const {data}=await api.get("/api/integrations/google/connect")
@@ -35,6 +37,17 @@ export const disconnectInstagram=async ()=>{
     try {
         const {data}=await api.get("/api/integrations/instagram/disconnect")
 
+        return data
+    } catch (error) {
+        console.log(error)
+        return (error)
+    }
+}
+
+
+export const getAllIntegrations=async ()=>{
+    try {
+        const {data}=await api.get("/api/integrations/all")
         return data
     } catch (error) {
         console.log(error)

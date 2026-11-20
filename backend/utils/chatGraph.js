@@ -18,6 +18,14 @@ const client = new MongoClient(process.env.MONGO_URI);
 const checkpointer = new MongoDBSaver({ client, dbName: "langgraph" });
 
 const chatNode = async (state) => {
+    // state is the current state of your LangGraph workflow.
+//     state = {
+//     messages: [
+//         HumanMessage("Hello"),
+//         AIMessage("Hello!"),
+//         HumanMessage("My name is EAN")
+//     ]
+// }
     const recentMessages = state.messages.slice(-4);
     const response = await llm.invoke(recentMessages)
 

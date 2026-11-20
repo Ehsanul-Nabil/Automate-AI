@@ -8,24 +8,46 @@ import { createAgent } from "@/features/agent"
 
 const availableTools = [
   {
-    id: "calculator",
-    name: "Calculator",
-    description: "Perform mathematical calculations",
-  },
-  {
-    id: "web.search",
+    id: "web_search",
     name: "Web Search",
-    description: "Search for information on the web",
+    description:
+      "Search the web for real-time information, news, tutorials, documentation, and answers to your questions.",
   },
   {
-    id: "gmail.read",
-    name: "Read Emails",
-    description: "Read and summarize emails",
+    id: "analyze_image",
+    name: "Image Analyzer",
+    description:
+      "Analyze images to identify objects, understand visual content, and answer questions about images.",
   },
   {
-    id: "gmail.send",
-    name: "Send Emails",
-    description: "Draft and send emails",
+    id: "send_email",
+    name: "Send Email",
+    description:
+      "Compose and send emails directly through your connected Gmail account.",
+  },
+  {
+    id: "create_calender_event",
+    name: "Create Calendar Event",
+    description:
+      "Create and schedule events in your Google Calendar with titles, descriptions, dates, and times.",
+  },
+  {
+    id: "list_emails",
+    name: "Email Manager",
+    description:
+      "Search and retrieve emails from your Gmail inbox, including unread messages and emails from specific senders.",
+  },
+  {
+    id: "list_calender_events",
+    name: "Calendar Manager",
+    description:
+      "View and retrieve your Google Calendar events, meetings, and upcoming schedules.",
+  },
+  {
+    id: "publish_instagram_post",
+    name: "Instagram Publisher",
+    description:
+      "Publish images to your connected Instagram account with AI-generated or custom captions and hashtags.",
   },
 ];
 

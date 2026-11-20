@@ -21,6 +21,11 @@ const userSchema = new mongoose.Schema({
     profilePicture: {
         type: String,
         default: ""
+    },
+    credits: {
+        type:Number,
+        default: 100,
+        min: 0,
     }
 }, { timestamps: true })
 

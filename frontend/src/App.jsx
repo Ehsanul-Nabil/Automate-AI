@@ -78,6 +78,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setUserData } from './redux/userSlice'
 import { setAgents, setAgentsLoading } from './redux/agentSlice'
 import { getAllAgents } from './features/agent'
+import Pricing from './pages/Pricing'
 
 function App() {
   const dispatch = useDispatch()
@@ -129,6 +130,7 @@ function App() {
           <Route path='/' element={userData ? <Home /> : <Navigate to="/login" />} />
           <Route path='/agents' element={userData ? <Agents /> : <Navigate to="/login" />} />
           <Route path='/integrations' element={userData ? <Integration /> : <Navigate to="/login" />} />
+          <Route path='/pricing' element={userData ? <Pricing /> : <Navigate to="/login" />} />
           <Route path='/agents/new' element={userData ? <CreateAgent /> : <Navigate to="/login" />} />
         </Routes>
       </BrowserRouter>

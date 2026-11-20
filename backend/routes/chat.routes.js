@@ -1,10 +1,12 @@
-import express from "express"
-import protect from "../middleware/protect.js"
-import { agentChat, chat } from "../controllers/chat.controller.js"
+import express from "express";
 
-const chatRouter=express.Router()
+import protect from "../middleware/protect.js";
+import { agentChat, approveTool, chat } from "../controllers/chat.controller.js";
 
-chatRouter.post("/",protect,chat)
-chatRouter.post("/agent",protect,agentChat)
+const chatRouter = express.Router();
 
-export default chatRouter
+chatRouter.post("/", protect, chat);
+chatRouter.post("/agent", protect, agentChat);
+chatRouter.post("/agent/resume", protect, approveTool);
+
+export default chatRouter;
